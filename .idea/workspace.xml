@@ -3,14 +3,19 @@
   <component name="ChangeListManager">
     <list default="true" id="c522de7f-3f93-4f88-8096-96de9ce3f16d" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/src/components/Auth.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/ERC20Creating.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/contracts/CreateERC20.sol" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/utils/ethereumAPI.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.test.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/artifacts/build-info/90575e33549ea1df4a0133d2c913e020.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/artifacts/src/contracts/CreateERC20.sol/ERC20Token.dbg.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/artifacts/src/contracts/CreateERC20.sol/ERC20Token.dbg.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/artifacts/src/contracts/CreateERC20.sol/ERC20Token.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/artifacts/src/contracts/CreateERC20.sol/ERC20Token.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cache/solidity-files-cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/cache/solidity-files-cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ERC20Creating.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ERC20Creating.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contracts/CreateERC20.sol" beforeDir="false" afterPath="$PROJECT_DIR$/src/contracts/CreateERC20.sol" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/index.css" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/logo.svg" beforeDir="false" />
@@ -36,16 +41,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/glock/deploy-erc20",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "/Users/glock/deploy-erc20/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/glock/deploy-erc20&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/glock/deploy-erc20/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src" />

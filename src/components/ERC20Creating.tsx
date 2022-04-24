@@ -49,10 +49,8 @@ const ERC20Creating: FC = () => {
     const defaultDecimals = "18";
     const defaultInitialSupply = "1000000000000000000";
 
-    const [tokeName, setTokenName] = useState<string>('')
-    const [tokeSymbol, setTokenSymbol] = useState<string>('')
-    const [tokenInitialSupply, setTokenInitialSupply] = useState(defaultInitialSupply);
-    const [tokenInfo, setTokenInfo] = useState<ITokenInfo>()
+    const [balance, setBalance] = useState<string>()
+    const [amount, setAmount] = useState("1000000000000000000")
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     let erc20: ethers.Contract;
@@ -60,7 +58,7 @@ const ERC20Creating: FC = () => {
     const createToken = async () => {
         if (!window.ethereum) return
         try {
-            const oneEther = BigNumber.from("1000000000000000000");
+            const oneEther = BigNumber.from(amount);
             signer = await provider.getSigner()
             const CreateERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
             const address = await signer.getAddress()
@@ -69,6 +67,7 @@ const ERC20Creating: FC = () => {
             const txResult = await tx.wait();
             const balance = await ERC20.balances(address)
             erc20 = ERC20;
+            setBalance(ethers.utils.formatEther(balance))
             console.log("balance1:", balance);
         }
         catch (e) {
@@ -81,9 +80,13 @@ const ERC20Creating: FC = () => {
             signer = await provider.getSigner()
             console.log(signer)
             const address = await signer.getAddress()
-            const ERC20BurnToken = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
-            const burnToken = await ERC20BurnToken.deploy()
-            await burnToken.burn(address)
+            const ERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
+            const burnToken = await ERC20.deploy()
+            const tx = await burnToken.burn(address);
+            const txResult = await tx.wait();
+            const balance = await burnToken.balances(address)
+            setBalance(ethers.utils.formatEther(balance))
+            console.log("balance1:", balance);
         }
         catch (e) {
             console.log(e)
@@ -102,46 +105,12 @@ const ERC20Creating: FC = () => {
 
     return (
         <div>
+            <h1>Minted token balance: {balance}</h1>
             <Wrapper>
-                <InputWrap>
-                    <label>Name</label>
-                    <input placeholder="GOLD" onChange={(e) => setTokenName(e.target.value)}/>
-                </InputWrap>
-                <InputWrap>
-                    <label>Symbol</label>
-                    <input placeholder="GLD" onChange={(e) => setTokenSymbol(e.target.value)}/>
-                </InputWrap>
-                <InputWrap>
-                    <label>Initial supply (raw)</label>
-                    <input
-                        placeholder={defaultInitialSupply}
-                        /*value={setTokenInitialSupply(defaultInitialSupply)}*/
-                        /*onChange={e => setTokenInitialSupply(e.target.value)}*/
-                    />
-                </InputWrap>
-                <InputWrap>
-                    <label>Initial supply (adjusted)</label>
-                    <input
-                        placeholder="1"
-                        value={applyDecimals(tokenInitialSupply, defaultDecimals)}
-                    />
-                </InputWrap>
-                <InputWrap>
-                    <label>Decimals</label>
-                    <input
-                        placeholder={defaultDecimals}
-                        value={defaultDecimals}
-                    />
-                </InputWrap>
                 <CreateToken onClick={() => createToken()}>Create</CreateToken>
-                <CreateToken onClick={() => getContractBalance()}>Get balance of Contract</CreateToken>
+                <input placeholder={defaultInitialSupply} value={amount} onChange={e => setAmount(e.target.value)}/>
                 <CreateToken onClick={() => burnToken()}>Burn</CreateToken>
             </Wrapper>
-            <TokenWrap>
-                <h3>Token Name: {tokenInfo?.name}</h3>
-                <h3>Token Symbol: {tokenInfo?.symbol}</h3>
-                <h3>Total Supply: {tokenInfo?.totalSupply}</h3>
-            </TokenWrap>
         </div>
     )
 }

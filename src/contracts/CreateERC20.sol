@@ -9,16 +9,16 @@ contract ERC20Token {
     constructor() {
         minter = msg.sender;
     }
-    function mint(address receiver) public payable {
+    function mint(address receiver) external payable {
         require(msg.value != 0);
         require(msg.sender == minter);
         uint amount = msg.value;
-        balances[receiver] = amount;
+        balances[receiver] += amount;
     }
     function burn(address payable receiver) external {
-        require(balances[receiver] != 0);
-        //uint amount = balances[receiver];
-        receiver.transfer(100);
+        //require(balances[receiver] != 0);
+        uint amount = balances[receiver];
+        receiver.transfer(amount);
     }
 }
 
