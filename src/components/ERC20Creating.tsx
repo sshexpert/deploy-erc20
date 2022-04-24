@@ -65,10 +65,8 @@ const ERC20Creating: FC = () => {
             const CreateERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
             const address = await signer.getAddress()
             const ERC20 = await CreateERC20.deploy()
-            const tx = await ERC20.mint(address, {value: oneEther})
-            console.log(tx);            
-            const delay = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
-            await delay(10000);
+            const tx = await ERC20.mint(address, {value: oneEther});
+            const txResult = await tx.wait();
             const balance = await ERC20.balances(address)
             erc20 = ERC20;
             console.log("balance1:", balance);
@@ -101,31 +99,6 @@ const ERC20Creating: FC = () => {
             console.log(e)
         }
     }
-
-  /*  const createToken = async () => {
-
-        if (!window.ethereum) return
-        try {
-            const provider = new ethers.providers.Web3Provider(window.ethereum)
-            const signer = provider.getSigner()
-            let ERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
-            const erc20 = await ERC20.deploy(tokeName, tokeSymbol, defaultInitialSupply)
-            console.log(erc20)
-            const tokenName = await erc20.name()
-            const tokenSymbol = await erc20.symbol()
-            const totalSupply = await erc20.totalSupply()
-            const tokenAddress = await erc20.address
-            setTokenInfo({
-                name: tokenName,
-                symbol: tokenSymbol,
-                totalSupply: await ethers.utils.formatEther(totalSupply)
-            })
-        }
-        catch (e) {
-            console.log(e)
-        }
-    }*/
-
 
     return (
         <div>
