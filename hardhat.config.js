@@ -6,7 +6,6 @@ require("@nomiclabs/hardhat-ethers");
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners();
-  await network.provider.send("evm_setAutomine", [false]);
     for (const account of accounts) {
     console.log(account.address);
   }
@@ -30,8 +29,7 @@ module.exports = {
     hardhat: {
       chainId: 1337,
         mining: {
-            auto: true,
-            interval: 0,
+            auto: true
         }
     },
   }

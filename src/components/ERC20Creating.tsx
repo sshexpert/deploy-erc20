@@ -55,6 +55,7 @@ const ERC20Creating: FC = () => {
     const [tokenInfo, setTokenInfo] = useState<ITokenInfo>()
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    let erc20: ethers.Contract;
     let signer: any
     const createToken = async () => {
         if (!window.ethereum) return
@@ -64,11 +65,13 @@ const ERC20Creating: FC = () => {
             const CreateERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
             const address = await signer.getAddress()
             const ERC20 = await CreateERC20.deploy()
-            await ERC20.mint(address, {value: oneEther})
-            console.log(ERC20)
-            const balance = await ERC20.balances(ERC20.address)
-            console.log(balance)
-            //let balance = await provider.getBalance(ERC20.address)
+            const tx = await ERC20.mint(address, {value: oneEther})
+            console.log(tx);            
+            const delay = (ms: any) => new Promise((resolve) => setTimeout(resolve, ms));
+            await delay(10000);
+            const balance = await ERC20.balances(address)
+            erc20 = ERC20;
+            console.log("balance1:", balance);
         }
         catch (e) {
             console.log(e)
@@ -90,19 +93,9 @@ const ERC20Creating: FC = () => {
     }
     const getContractBalance = async () => {
         try {
-            signer = await provider.getSigner()
-            const CreateERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
-            const ERC20 = await CreateERC20.deploy()
-            const balance = await ERC20.balances(ERC20.address)
-            console.log(balance)
-            /*.then(balance => {
-                const balanceInEth = ethers.utils.formatEther(balance)
-                console.log(`balance: ${balanceInEth} ETH`)
-                console.log(balance)
-            })
-            .catch(e => {
-                console.log(e)
-            })*/
+            console.log(erc20);
+            const balance = await erc20.balances(await signer.getAddress());
+            console.log("balance2:", balance);
         }
         catch (e) {
             console.log(e)
