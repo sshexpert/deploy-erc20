@@ -16,9 +16,19 @@ contract ERC20Token {
         balances[receiver] += amount;
     }
     function burn(address payable receiver) external {
-        //require(balances[receiver] != 0);
+        //require(balances[receiver]);
         uint amount = balances[receiver];
         receiver.transfer(amount);
+    }
+    function transfer(address receiver, uint amount) public {
+        balances[msg.sender] -= amount;
+        balances[receiver] += amount;
+    }
+    function transferFrom(address receiver) external payable {
+        require(msg.value != 0);
+        require(msg.sender == minter);
+        uint amount = msg.value;
+        balances[receiver] += amount;
     }
 }
 
