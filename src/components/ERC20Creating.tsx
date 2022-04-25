@@ -51,6 +51,7 @@ const ERC20Creating: FC = () => {
     const defaultInitialSupply = "1000000000000000000";
     //Mint
     const [balance, setBalance] = useState<string>()
+    const [mintedTokenBalance, setMintedTokenBalance] = useState<string>();
     const [amount, setAmount] = useState("1000000000000000000")
     //Transfer
     const [transferAmount, setTransferAmount] = useState('1000000000000000000')
@@ -62,24 +63,25 @@ const ERC20Creating: FC = () => {
 
     //Approve
     const [approveAddress, setApproveAddress] = useState<string>()
+    const [erc20, setErc20] = useState<ethers.Contract>();
+    const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner>();
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    let erc20: ethers.Contract;
-    let signer: any
     const createToken = async () => {
         if (!window.ethereum) return
         try {
             const ether = BigNumber.from(amount);
-            signer = await provider.getSigner()
+            setSigner(await provider.getSigner());
             const CreateERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
-            const address = await signer.getAddress()
+            const address = await signer!.getAddress()
             const ERC20 = await CreateERC20.deploy()
             const tx = await ERC20.mint({value: ether});
             const txResult = await tx.wait();
             const balance = await ERC20.balances(address)
-            erc20 = ERC20;
+            setErc20(ERC20);
             setBalance(ethers.utils.formatEther(balance))
-            console.log("balance1:", balance);
+            
+            console.log("createToken balance:", balance);
         }
         catch (e) {
             console.log(e)
@@ -88,16 +90,13 @@ const ERC20Creating: FC = () => {
 
     const burnToken = async () => {
         try {
-            signer = await provider.getSigner()
-            console.log(signer)
-            const address = await signer.getAddress()
-            const ERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
-            const burnToken = await ERC20.deploy()
-            const tx = await burnToken.burn(address);
-            const txResult = await tx.wait();
-            const balance = await burnToken.balances(address)
-            setBalance(ethers.utils.formatEther(balance))
-            console.log("balance1:", balance);
+            const address = await signer!.getAddress();
+            const tx = await erc20!.burn(address);
+            await tx.wait();
+            const balanceToken = await erc20!.balances(address)
+            const balanceETH = await provider.getBalance(address);
+            setBalance(ethers.utils.formatEther(balanceToken));
+            console.log("burn balanceToken: {0}, balanceETH: {1}", balanceToken, balanceETH);
         }
         catch (e) {
             console.log(e)
@@ -106,7 +105,7 @@ const ERC20Creating: FC = () => {
     const getContractBalance = async () => {
         try {
             console.log(erc20);
-            const balance = await erc20.balances(await signer.getAddress());
+            const balance = await erc20!.balances(await signer!.getAddress());
             console.log("balance2:", balance);
         }
         catch (e) {
@@ -116,8 +115,8 @@ const ERC20Creating: FC = () => {
     const transfer = async () => {
         try {
             const ether = BigNumber.from(transferAmount);
-            signer = await provider.getSigner()
-            const address = await signer.getAddress()
+            setSigner(await provider.getSigner())
+            const address = await signer!.getAddress()
             const ERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
             const createTransfer = await ERC20.deploy()
             const tx = await createTransfer.transfer(transferAddress, ether)
@@ -134,15 +133,13 @@ const ERC20Creating: FC = () => {
 
     const transferFrom = async () => {
         try {
-            const ether = BigNumber.from(transferFromAmount);
-            signer = await provider.getSigner()
+            const ether = BigNumber.from(transferFromAmount);            
             const CreateERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
             //const address = await signer.getAddress()
             const ERC20 = await CreateERC20.deploy()
             const tx = await ERC20.transferFrom(transferFromAddress, transferToAddress, ether);
             const txResult = await tx.wait();
             const balance = await ERC20.balances(transferFromAddress)
-            erc20 = ERC20;
             console.log("balance1:", balance);
         }
         catch (e) {
@@ -152,7 +149,6 @@ const ERC20Creating: FC = () => {
 
     const approve = async () => {
         try {
-            signer = await provider.getSigner()
             const CreateERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
             const ERC20 = await CreateERC20.deploy()
             const tx = await ERC20.approve(approveAddress);

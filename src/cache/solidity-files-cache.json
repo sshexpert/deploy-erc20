@@ -1,8 +1,8 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/glock/deploy-erc20/src/contracts/CreateERC20.sol": {
-      "lastModificationDate": 1650884696615,
+    "/Users/markvirchenko/Projects/deploy-erc20/src/contracts/CreateERC20.sol": {
+      "lastModificationDate": 1650886115337,
       "contentHash": "3662d67054e9ca416e52cb3eb9ff28d9",
       "sourceName": "src/contracts/CreateERC20.sol",
       "solcConfig": {
