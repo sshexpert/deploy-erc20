@@ -9,18 +9,18 @@ import {BigNumber} from "ethers";
 import {address} from "hardhat/internal/core/config/config-validation";
 import {getSigner} from "@nomiclabs/hardhat-ethers/internal/helpers";
 
-const Wrapper = styled.div `
+const Wrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 40px;
 `
-const InputWrap = styled.div `
+const InputWrap = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
 `
 
-const CreateToken = styled.button `
+const CreateToken = styled.button`
   background-color: blueviolet;
   color: #fff;
   border: none;
@@ -30,7 +30,7 @@ const CreateToken = styled.button `
   cursor: pointer;
   margin-bottom: 10px;
 `
-const TokenWrap = styled.div `
+const TokenWrap = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -59,18 +59,24 @@ const ERC20Creating: FC = () => {
     const [transferFromAddress, setTransferFromAddress] = useState<string>()
     const [transferFromAmount, setTransferFromAmount] = useState<string>()
     const [transferToAddress, setTransferToAddress] = useState<string>()
-   //Import contract
+    const [transferFromSignature, setTransferFromSignature] = useState<string>()
+    //Import contract
     const [contractAddress, setContractAddress] = useState<string>()
     const [importedContract, setImportedContract] = useState<string>()
     //Formats
     const [format, setFormat] = useState<string>('ether')
 
+    //Signature
+    //const [signature, setSignature] = useState<any>()
+    const [signature, setSignature] = useState<any>()
+    const [signatureSender, setSignatureSender] = useState<string>()
+    const [signatureAmount, setSignatureAmount] = useState<string>()
     //Approve
     const [approveAddress, setApproveAddress] = useState<string>()
     const [erc20, setErc20] = useState<ethers.Contract>();
     const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner>();
-    //const [address, setAddress] = useState<string>()
-
+    const [walletAddress, setWalletAddress] = useState<string>()
+    const [signatureMessage, setSignatureMessage] = useState<string>()
     //Deploy
 
     const deployExistingContract = async () => {
@@ -80,8 +86,7 @@ const ERC20Creating: FC = () => {
             const ERC20 = new ethers.Contract(importedContract, abi, signer)
             setErc20(ERC20)
             console.log(erc20)
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e)
         }
     }
@@ -102,8 +107,7 @@ const ERC20Creating: FC = () => {
             setBalance(ethers.utils.formatEther(balance))
             console.log(signer)
             console.log("createToken balance:", balance);
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e)
         }
     }
@@ -117,8 +121,7 @@ const ERC20Creating: FC = () => {
             const balanceETH = await provider.getBalance(address);
             setBalance(ethers.utils.formatEther(balanceToken));
             console.log("burn balanceToken: {0}, balanceETH: {1}", balanceToken, balanceETH);
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e)
         }
     }
@@ -128,8 +131,7 @@ const ERC20Creating: FC = () => {
             const balance = await erc20!.balances(await signer!.getAddress());
             setBalance(ethers.utils.formatEther(balance))
             console.log("balance2:", balance);
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e)
         }
     }
@@ -143,8 +145,7 @@ const ERC20Creating: FC = () => {
             const balance = await erc20!.balances(address)
             console.log(balance)
             setBalance(ethers.utils.formatEther(balance))
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e)
         }
     }
@@ -152,34 +153,30 @@ const ERC20Creating: FC = () => {
     const transferFrom = async () => {
         try {
             const address = await signer!.getAddress();
-            console.log(`transferFrom address: ${transferFromAddress}`,  `transferTo address ${transferToAddress}`)
-            const tx = await erc20!.transferFrom(transferFromAddress, transferToAddress, formatConvertor(transferFromAmount));
+            console.log(`transferFrom address: ${transferFromAddress}`, `transferTo address ${transferToAddress}`)
+            //signature bytes mem
+            const tx = await erc20!.transferFrom(
+                transferFromAddress,
+                transferToAddress,
+                formatConvertor(transferFromAmount),
+                transferFromSignature
+            );
             const txResult = await tx.wait();
             const balance = await erc20!.balances(address)
             setBalance(ethers.utils.formatEther(balance))
             console.log("After transferFrom: ", balance);
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e)
             alert('You dont have permission to use it')
-        }
-    }
-
-    const approve = async () => {
-        try {
-            console.log('Approve address: ', approveAddress)
-            const tx = await erc20!.approve(approveAddress);
-            const txResult = await tx.wait()
-            console.log(txResult)
-        }
-        catch (e) {
-            console.log(e)
         }
     }
 
     const getData = async () => {
         let signer = await provider.getSigner()
         setSigner(signer)
+        let address = await signer.getAddress()
+        setWalletAddress(address)
+
     }
 
     useEffect(() => {
@@ -188,7 +185,7 @@ const ERC20Creating: FC = () => {
         }
     })
 
-    function formatConvertor (amount: any) {
+    function formatConvertor(amount: any) {
         let ether
         if (format === 'ether') {
             ether = BigNumber.from(applyDecimals(amount));
@@ -199,14 +196,40 @@ const ERC20Creating: FC = () => {
         return ether
     }
 
+    const signMessage = async (amount: string, sender: string) => {
+        try {
+            const signature = await signer?.signMessage(`${sender}${formatConvertor(amount)}${contractAddress}`)
+            setSignature(signature)
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
+
+    const approve = async () => {
+        try {
+            console.log('Approve address: ', approveAddress)
+            console.log('signature: ')
+            const tx = await erc20!.approve(approveAddress);
+            const txResult = await tx.wait()
+            console.log(txResult)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    //Contract address
+    //My wallet _> owner
+    //Friend wallet
+    //Amount
+    //---> sending to contract (wallet) meta transaction
     return (
         <div>
-                <h2>Import Contract</h2>
-                <label>Contract Address</label>
-                <input value={importedContract} onChange={e => setImportedContract(e.target.value)}/>
-                <CreateToken onClick={() => deployExistingContract()}>Import</CreateToken>
+            <h2>Import Contract</h2>
+            <label>Contract Address</label>
+            <input value={importedContract} onChange={e => setImportedContract(e.target.value)}/>
+            <CreateToken onClick={() => deployExistingContract()}>Import</CreateToken>
             {contractAddress && (<h4>Contract address: {contractAddress}</h4>)}
-            {balance ? (<h1>Minted token balance: {balance}</h1>) : (<h1>Create your own Token!</h1>)}
+            {balance ? (<h1>Token balance: {balance}</h1>) : (<h1>Create your own Token!</h1>)}
             <CreateToken onClick={() => getBalance()}>Get Balance</CreateToken>
             <Wrapper>
                 <h3>I'd like to use: {format}</h3>
@@ -225,24 +248,38 @@ const ERC20Creating: FC = () => {
                 <label>Amount in {format}</label>
                 <input value={transferAmount} onChange={e => setTransferAmount(e.target.value)}/>
                 <label>To</label>
-                <input placeholder="address" value={transferAddress} onChange={e => setTransferAddress(e.target.value)}/>
+                <input placeholder="address" value={transferAddress}
+                       onChange={e => setTransferAddress(e.target.value)}/>
                 <CreateToken onClick={() => transfer()}>Transfer</CreateToken>
             </Wrapper>
             <h1>Approve Address</h1>
-                <Wrapper>
-                    <input placeholder='White list address' value={approveAddress} onChange={e => setApproveAddress(e.target.value)}/>
-                    <CreateToken onClick={() => approve()}>Approve</CreateToken>
-                </Wrapper>
+            <Wrapper>
+                <input placeholder='White list address' value={approveAddress}
+                       onChange={e => setApproveAddress(e.target.value)}/>
+                <CreateToken onClick={() => approve()}>Approve</CreateToken>
+            </Wrapper>
             <h1>TransferFrom</h1>
             <Wrapper>
                 <label>Amount in {format}</label>
                 <input value={transferFromAmount} onChange={e => setTransferFromAmount(e.target.value)}/>
                 <label>From</label>
-                <input placeholder="address" value={transferFromAddress} onChange={e => setTransferFromAddress(e.target.value)}/>
+                <input placeholder="address" value={transferFromAddress}
+                       onChange={e => setTransferFromAddress(e.target.value)}/>
                 <label>To</label>
-                <input placeholder="address" value={transferToAddress} onChange={e => setTransferToAddress(e.target.value)}/>
+                <input placeholder="address" value={transferToAddress}
+                       onChange={e => setTransferToAddress(e.target.value)}/>
+                <label>Signature</label>
+                <input placeholder="address" value={transferFromSignature}
+                       onChange={e => setTransferFromSignature(e.target.value)}/>
                 <CreateToken onClick={() => transferFrom()}>Transfer</CreateToken>
             </Wrapper>
+            <Wrapper>
+                <h3>Create signature</h3>
+                <input placeholder="sender" value={signatureSender} onChange={e => setSignatureSender(e.target.value)}/>
+                <input placeholder="amount" value={signatureAmount} onChange={e => setSignatureAmount(e.target.value)}/>
+                <CreateToken onClick={() => signMessage(signatureAmount!, signatureSender!)}>Create</CreateToken>
+            </Wrapper>
+            <h1>{signature}</h1>
         </div>
     )
 }
