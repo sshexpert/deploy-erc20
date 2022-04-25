@@ -6,10 +6,10 @@ import ERC20Creating from "./components/ERC20Creating";
 const App = () => {
     return (
         <>
-            <Auth />
-            <ERC20Creating />
+            <Auth/>
+            <ERC20Creating/>
         </>
-    )
-}
+    );
+};
 
 export default App
