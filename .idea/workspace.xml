@@ -4,7 +4,6 @@
     <list default="true" id="c522de7f-3f93-4f88-8096-96de9ce3f16d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/ERC20Creating.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ERC20Creating.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/ethereumAPI.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/ethereumAPI.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +56,7 @@
       <workItem from="1650299245882" duration="604000" />
       <workItem from="1650790773101" duration="16077000" />
       <workItem from="1650873370691" duration="14766000" />
-      <workItem from="1650892738018" duration="1114000" />
+      <workItem from="1650892738018" duration="3969000" />
     </task>
     <servers />
   </component>
