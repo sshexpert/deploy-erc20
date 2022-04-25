@@ -59,8 +59,9 @@ const ERC20Creating: FC = () => {
     const [transferFromAddress, setTransferFromAddress] = useState<string>()
     const [transferFromAmount, setTransferFromAmount] = useState<string>()
     const [transferToAddress, setTransferToAddress] = useState<string>()
-
-
+   //Import contract
+    const [contractAddress, setContractAddress] = useState<string>()
+    const [importedContract, setImportedContract] = useState<string>()
     //Formats
     const [format, setFormat] = useState<string>('ether')
 
@@ -70,6 +71,21 @@ const ERC20Creating: FC = () => {
     const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner>();
     //const [address, setAddress] = useState<string>()
 
+    //Deploy
+
+    const deployExistingContract = async () => {
+        if (!importedContract) return
+        try {
+            setSigner(await provider.getSigner());
+            const ERC20 = new ethers.Contract(importedContract, abi, signer)
+            setErc20(ERC20)
+            console.log(erc20)
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
+
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const createToken = async () => {
         if (!window.ethereum) return
@@ -78,6 +94,7 @@ const ERC20Creating: FC = () => {
             const CreateERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
             const address = await signer!.getAddress()
             const ERC20 = await CreateERC20.deploy()
+            setContractAddress(ERC20.address)
             const tx = await ERC20.mint({value: formatConvertor(amount)});
             const txResult = await tx.wait();
             const balance = await ERC20.balances(address)
@@ -105,10 +122,11 @@ const ERC20Creating: FC = () => {
             console.log(e)
         }
     }
-    const getContractBalance = async () => {
+    const getBalance = async () => {
         try {
             console.log(erc20);
             const balance = await erc20!.balances(await signer!.getAddress());
+            setBalance(ethers.utils.formatEther(balance))
             console.log("balance2:", balance);
         }
         catch (e) {
@@ -183,7 +201,13 @@ const ERC20Creating: FC = () => {
 
     return (
         <div>
+                <h2>Import Contract</h2>
+                <label>Contract Address</label>
+                <input value={importedContract} onChange={e => setImportedContract(e.target.value)}/>
+                <CreateToken onClick={() => deployExistingContract()}>Import</CreateToken>
+            {contractAddress && (<h4>Contract address: {contractAddress}</h4>)}
             {balance ? (<h1>Minted token balance: {balance}</h1>) : (<h1>Create your own Token!</h1>)}
+            <CreateToken onClick={() => getBalance()}>Get Balance</CreateToken>
             <Wrapper>
                 <h3>I'd like to use: {format}</h3>
                 <CreateToken onClick={() => {
