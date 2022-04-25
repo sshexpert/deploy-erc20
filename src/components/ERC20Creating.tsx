@@ -62,6 +62,8 @@ const ERC20Creating: FC = () => {
     const [transferFromAmount, setTransferFromAmount] = useState<string>()
     const [transferToAddress, setTransferToAddress] = useState<string>()
 
+    const [format, setFormat] = useState<string>('ether')
+
     //Approve
     const [approveAddress, setApproveAddress] = useState<string>()
     const [erc20, setErc20] = useState<ethers.Contract>();
@@ -166,7 +168,7 @@ const ERC20Creating: FC = () => {
     }
 
     useEffect(() => {
-        if (!signer) {
+        if (!signer || !address) {
             getData()
         }
     })
@@ -174,6 +176,8 @@ const ERC20Creating: FC = () => {
     return (
         <div>
             {balance ? (<h1>Minted token balance: {balance}</h1>) : (<h1>Create your own Token!</h1>)}
+                <h3>I'd like to use: {format}</h3>
+                <CreateToken>Change</CreateToken>
             <Wrapper>
                 <CreateToken onClick={() => createToken()}>Create</CreateToken>
                 <input placeholder="1" value={amount} onChange={e => setAmount(e.target.value)}/>
