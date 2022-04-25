@@ -62,7 +62,7 @@ const ERC20Creating: FC = () => {
     const [transferFromAddress, setTransferFromAddress] = useState<string>()
     const [transferFromAmount, setTransferFromAmount] = useState<string>()
     const [transferToAddress, setTransferToAddress] = useState<string>()
-    
+
 
     //Approve
     const [approveAddress, setApproveAddress] = useState<string>()
@@ -168,7 +168,7 @@ const ERC20Creating: FC = () => {
     }
 
     useEffect(() => {
-        if (!signer || !address) {
+        if (!signer) {
             getData()
         }
     })
