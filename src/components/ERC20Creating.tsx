@@ -58,6 +58,11 @@ const ERC20Creating: FC = () => {
     //TransferFrom
     const [transferFromAddress, setTransferFromAddress] = useState<string>()
     const [transferFromAmount, setTransferFromAmount] = useState<string>()
+    const [transferToAddress, setTransferToAddress] = useState<string>()
+
+    //Approve
+    const [approveAddress, setApproveAddress] = useState<string>()
+
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     let erc20: ethers.Contract;
     let signer: any
@@ -69,7 +74,7 @@ const ERC20Creating: FC = () => {
             const CreateERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
             const address = await signer.getAddress()
             const ERC20 = await CreateERC20.deploy()
-            const tx = await ERC20.mint(address, {value: ether});
+            const tx = await ERC20.mint({value: ether});
             const txResult = await tx.wait();
             const balance = await ERC20.balances(address)
             erc20 = ERC20;
@@ -108,21 +113,17 @@ const ERC20Creating: FC = () => {
             console.log(e)
         }
     }
-
     const transfer = async () => {
         try {
             const ether = BigNumber.from(transferAmount);
             signer = await provider.getSigner()
-            const callerAddress = await signer.getAddress()
-            const address = transferAddress
-            console.log(address, transferAmount)
+            const address = await signer.getAddress()
             const ERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
             const createTransfer = await ERC20.deploy()
-            const tx = await createTransfer.transfer(address, transferAmount);
+            const tx = await createTransfer.transfer(transferAddress, ether)
             const txResult = await tx.wait()
-            console.log(txResult)
             //Update balance
-            const balance = await createTransfer.balances(callerAddress)
+            const balance = await createTransfer.balances(address)
             console.log(balance)
             setBalance(ethers.utils.formatEther(balance))
         }
@@ -133,19 +134,33 @@ const ERC20Creating: FC = () => {
 
     const transferFrom = async () => {
         try {
-            const ether = BigNumber.from(transferAmount);
+            const ether = BigNumber.from(transferFromAmount);
             signer = await provider.getSigner()
             const CreateERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
             //const address = await signer.getAddress()
             const ERC20 = await CreateERC20.deploy()
-            const tx = await ERC20.mint(transferFromAddress, {value: ether});
+            const tx = await ERC20.transferFrom(transferFromAddress, transferToAddress, ether);
             const txResult = await tx.wait();
             const balance = await ERC20.balances(transferFromAddress)
             erc20 = ERC20;
             console.log("balance1:", balance);
         }
         catch (e) {
+            console.log(e)
+        }
+    }
 
+    const approve = async () => {
+        try {
+            signer = await provider.getSigner()
+            const CreateERC20 = new ethers.ContractFactory(abi, ERCToken.bytecode, signer)
+            const ERC20 = await CreateERC20.deploy()
+            const tx = await ERC20.approve(approveAddress);
+            const txResult = await tx.wait()
+            console.log(txResult)
+        }
+        catch (e) {
+            console.log(e)
         }
     }
 
@@ -165,12 +180,19 @@ const ERC20Creating: FC = () => {
                 <input placeholder="address" value={transferAddress} onChange={e => setTransferAddress(e.target.value)}/>
                 <CreateToken onClick={() => transfer()}>Transfer</CreateToken>
             </Wrapper>
+            <h1>Approve Address</h1>
+                <Wrapper>
+                    <input placeholder='White list address' value={approveAddress} onChange={e => setApproveAddress(e.target.value)}/>
+                    <CreateToken onClick={() => approve()}>Approve</CreateToken>
+                </Wrapper>
             <h1>TransferFrom</h1>
             <Wrapper>
                 <label>Amount</label>
                 <input placeholder={defaultInitialSupply} value={transferFromAmount} onChange={e => setTransferFromAmount(e.target.value)}/>
-                <label>To</label>
+                <label>From</label>
                 <input placeholder="address" value={transferFromAddress} onChange={e => setTransferFromAddress(e.target.value)}/>
+                <label>To</label>
+                <input placeholder="address" value={transferToAddress} onChange={e => setTransferToAddress(e.target.value)}/>
                 <CreateToken onClick={() => transferFrom()}>Transfer</CreateToken>
             </Wrapper>
         </div>

@@ -6,29 +6,40 @@ contract ERC20Token {
     address public minter;
 
     mapping (address => uint) public balances;
+    mapping (address => address) public whiteList;
+    uint public totalSupply;
+
     constructor() {
         minter = msg.sender;
     }
-    function mint(address receiver) external payable {
+    function mint() external payable {
         require(msg.value != 0);
-        require(msg.sender == minter);
         uint amount = msg.value;
-        balances[receiver] += amount;
+        balances[msg.sender] += amount;
+        totalSupply += amount;
     }
     function burn(address payable receiver) external {
-        //require(balances[receiver]);
         uint amount = balances[receiver];
         receiver.transfer(amount);
+        balances[receiver] -= amount;
+        totalSupply -= amount;
     }
-    function transfer(address receiver, uint amount) public {
-        balances[msg.sender] -= amount;
+
+    function transferBlock (address sender, address receiver, uint amount) public {
+        require(amount <= balances[sender]);
+        balances[sender] -= amount;
         balances[receiver] += amount;
     }
-    function transferFrom(address receiver) external payable {
-        require(msg.value != 0);
-        require(msg.sender == minter);
-        uint amount = msg.value;
-        balances[receiver] += amount;
+
+    function transfer(address receiver, uint amount) external {
+        transferBlock(msg.sender, receiver, amount);
+    }
+    function transferFrom(address sender, address receiver, uint amount) external  {
+        require(whiteList[sender] == msg.sender);
+        transferBlock(sender, receiver, amount);
+    }
+    function approve (address whiteAddress) external {
+        whiteList[msg.sender] = whiteAddress;
     }
 }
 
