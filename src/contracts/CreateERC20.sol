@@ -40,8 +40,10 @@ contract ERC20Token {
 
 
     function transferFrom(address sender, address receiver, uint amount, bytes memory sig) external {
-        bytes32 message = prefixed(keccak256(abi.encodePacked(receiver, amount, address(this))));
-        require(recoverSigner(message, sig) == sender);
+        console.logBytes(sig);
+        bytes32 message = prefixed(keccak256(abi.encode(receiver, amount, address(this))));
+        console.logBytes32(keccak256(abi.encode(receiver, amount, address(this))));
+        require(recoverSigner(message, sig) == sender, "Wrong signature");
         transferBlock(sender, receiver, amount);
     }
     function prefixed(bytes32 hash) internal pure returns (bytes32) {
@@ -50,27 +52,37 @@ contract ERC20Token {
         );
     }
 
-    /*function getMessageHash(
-        address receiver,
-        uint amount,
-        string memory _message,
-        uint _nonce
-    ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_to, _amount, _message));
-    }*/
+    function recoverSigner(bytes32 _ethSignedMessageHash, bytes memory _signature)
+    public
+    pure
+    returns (address)
+    {
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
+
+        return ecrecover(_ethSignedMessageHash, v, r, s);
+    }
 
     function splitSignature(bytes memory sig)
-    internal
+    public
     pure
-    returns (uint8, bytes32, bytes32)
+    returns (
+        bytes32 r,
+        bytes32 s,
+        uint8 v
+    )
     {
-        require(sig.length == 65);
-
-        bytes32 r;
-        bytes32 s;
-        uint8 v;
+        require(sig.length == 65, "invalid signature length");
 
         assembly {
+        /*
+        First 32 bytes stores the length of the signature
+
+        add(sig, 32) = pointer of sig + 32
+        effectively, skips first 32 bytes of signature
+
+        mload(p) loads next 32 bytes starting at the memory address p into memory
+        */
+
         // first 32 bytes, after the length prefix
             r := mload(add(sig, 32))
         // second 32 bytes
@@ -79,21 +91,7 @@ contract ERC20Token {
             v := byte(0, mload(add(sig, 96)))
         }
 
-        return (v, r, s);
-    }
-
-    function recoverSigner(bytes32 message, bytes memory sig)
-    internal
-    pure
-    returns (address)
-    {
-        uint8 v;
-        bytes32 r;
-        bytes32 s;
-
-        (v, r, s) = splitSignature(sig);
-
-        return ecrecover(message, v, r, s);
+        // implicitly return (r, s, v)
     }
 }
 

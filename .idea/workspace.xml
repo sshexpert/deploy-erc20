@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="c522de7f-3f93-4f88-8096-96de9ce3f16d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/artifacts/build-info/0d53e043369bb649d4a39082635875f4.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/artifacts/build-info/a57921977f6ce6743b5c7891bb8817ba.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/artifacts/hardhat/console.sol/console.dbg.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/artifacts/hardhat/console.sol/console.dbg.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/artifacts/src/contracts/CreateERC20.sol/ERC20Token.dbg.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/artifacts/src/contracts/CreateERC20.sol/ERC20Token.dbg.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/artifacts/src/contracts/CreateERC20.sol/ERC20Token.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/artifacts/src/contracts/CreateERC20.sol/ERC20Token.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cache/solidity-files-cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/cache/solidity-files-cache.json" afterDir="false" />
@@ -61,7 +62,7 @@
       <workItem from="1650299245882" duration="604000" />
       <workItem from="1650790773101" duration="16077000" />
       <workItem from="1650873370691" duration="14766000" />
-      <workItem from="1650892738018" duration="24146000" />
+      <workItem from="1650892738018" duration="32359000" />
     </task>
     <servers />
   </component>

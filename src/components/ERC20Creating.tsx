@@ -149,12 +149,12 @@ const ERC20Creating: FC = () => {
             console.log(e)
         }
     }
-
     const transferFrom = async () => {
         try {
             const address = await signer!.getAddress();
             console.log(`transferFrom address: ${transferFromAddress}`, `transferTo address ${transferToAddress}`)
             //signature bytes mem
+            console.log(importedContract)
             const tx = await erc20!.transferFrom(
                 transferFromAddress,
                 transferToAddress,
@@ -197,8 +197,15 @@ const ERC20Creating: FC = () => {
     }
 
     const signMessage = async (amount: string, sender: string) => {
+
         try {
-            const signature = await signer?.signMessage(`${sender}${formatConvertor(amount)}${contractAddress}`)
+            console.log(`${sender}${formatConvertor(amount)}${contractAddress}`)
+            const encodedData = ethers.utils.defaultAbiCoder.encode(
+                ['address', 'uint256', 'address'],
+                [sender, formatConvertor(amount), contractAddress]
+            )
+            console.log(ethers.utils.keccak256(encodedData))
+            const signature = await signer?.signMessage(ethers.utils.keccak256(encodedData))
             setSignature(signature)
         }
         catch (e) {
