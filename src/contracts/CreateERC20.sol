@@ -40,10 +40,9 @@ contract ERC20Token {
 
 
     function transferFrom(address sender, address receiver, uint amount, bytes memory sig) external {
-        console.logBytes(sig);
-        bytes32 message = prefixed(keccak256(abi.encode(receiver, amount, address(this))));
-        console.logBytes32(keccak256(abi.encode(receiver, amount, address(this))));
+        bytes32 message = prefixed(keccak256(abi.encode(msg.sender, amount, address(this))));
         require(recoverSigner(message, sig) == sender, "Wrong signature");
+
         transferBlock(sender, receiver, amount);
     }
     function prefixed(bytes32 hash) internal pure returns (bytes32) {

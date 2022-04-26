@@ -204,8 +204,8 @@ const ERC20Creating: FC = () => {
                 ['address', 'uint256', 'address'],
                 [sender, formatConvertor(amount), contractAddress]
             )
-            console.log(ethers.utils.keccak256(encodedData))
-            const signature = await signer?.signMessage(ethers.utils.keccak256(encodedData))
+            const message = ethers.utils.arrayify(ethers.utils.keccak256(encodedData));
+            const signature = await signer?.signMessage(message);
             setSignature(signature)
         }
         catch (e) {
